@@ -390,4 +390,5 @@ pyrightconfig.json
 
 .env
 
+documentation.md
 # End of https://www.toptal.com/developers/gitignore/api/java,python,node,macos,visualstudiocode
