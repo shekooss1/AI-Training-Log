@@ -345,6 +345,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+application.properities
 # pytype static type analyzer
 .pytype/
 
@@ -386,5 +387,7 @@ pyrightconfig.json
 # Ignore all local history of files
 .history
 .ionide
+
+.env
 
 # End of https://www.toptal.com/developers/gitignore/api/java,python,node,macos,visualstudiocode
