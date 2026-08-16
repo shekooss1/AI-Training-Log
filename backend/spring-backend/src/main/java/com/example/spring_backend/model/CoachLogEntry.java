@@ -23,7 +23,7 @@ public CoachLogEntry(){}
 
 public CoachLogEntry(String title, LocalDate sessionDate, Workout workout) {
     this.title = title;
-    sessionDate = sessionDate;
+    this.sessionDate = sessionDate;
     this.workout = workout;
 }
 
