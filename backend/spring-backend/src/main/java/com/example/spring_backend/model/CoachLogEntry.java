@@ -11,7 +11,6 @@ import jakarta.persistence.Id;
 public class CoachLogEntry {
 private String title ;
 LocalDate sessionDate;
-private Workout workout ;
 
 @Id
 @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -21,10 +20,9 @@ public CoachLogEntry(){}
 
 
 
-public CoachLogEntry(String title, LocalDate sessionDate, Workout workout) {
+public CoachLogEntry(String title, LocalDate sessionDate) {
     this.title = title;
     this.sessionDate = sessionDate;
-    this.workout = workout;
 }
 
 
@@ -45,13 +43,6 @@ public void setSessionDate(LocalDate sessionDate) {
     this.sessionDate = sessionDate;
 }
 
-public Workout getWorlkout() {
-    return workout;
-}
-
-public void setWorkout(Workout workout) {
-    this.workout = workout;
-}
 
 public Long getId() {
     return id;

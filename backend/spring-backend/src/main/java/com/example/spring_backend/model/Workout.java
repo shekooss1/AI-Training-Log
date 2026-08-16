@@ -1,7 +1,6 @@
 package com.example.spring_backend.model;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +17,6 @@ public class Workout {
    @GeneratedValue(strategy =GenerationType.IDENTITY )
    private Long id ; 
    
-   List<Set> sets ;
    
    public Workout(){}
 
@@ -60,13 +58,7 @@ public class Workout {
       this.id = id;
    }
 
-   public List<Set> getSets() {
-      return sets;
-   }
-
-   public void setSets(List<Set> sets) {
-      this.sets = sets;
-   }
+  
    
    
 }
