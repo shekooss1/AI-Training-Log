@@ -10,8 +10,8 @@ import jakarta.persistence.Id;
 @Entity
 public class CoachLogEntry {
 private String title ;
-LocalDate SessionDate;
-private Workout worlkout ;
+LocalDate sessionDate;
+private Workout workout ;
 
 @Id
 @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -21,10 +21,10 @@ public CoachLogEntry(){}
 
 
 
-public CoachLogEntry(String title, LocalDate sessionDate, Workout worlkout) {
+public CoachLogEntry(String title, LocalDate sessionDate, Workout workout) {
     this.title = title;
-    SessionDate = sessionDate;
-    this.worlkout = worlkout;
+    sessionDate = sessionDate;
+    this.workout = workout;
 }
 
 
@@ -38,19 +38,19 @@ public void setTitle(String title) {
 }
 
 public LocalDate getSessionDate() {
-    return SessionDate;
+    return sessionDate;
 }
 
 public void setSessionDate(LocalDate sessionDate) {
-    SessionDate = sessionDate;
+    this.sessionDate = sessionDate;
 }
 
 public Workout getWorlkout() {
-    return worlkout;
+    return workout;
 }
 
-public void setWorlkout(Workout worlkout) {
-    this.worlkout = worlkout;
+public void setWorkout(Workout workout) {
+    this.workout = workout;
 }
 
 public Long getId() {
