@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Set {
@@ -20,6 +21,9 @@ public class Set {
     
     private double intensity ;
 
+    @ManyToOne
+    private DailyLog dailyLog ;
+
     public Set(){}
     
     public Set( int reps, int distance, int rest, String target, double intenisty) {
@@ -29,6 +33,23 @@ public class Set {
         this.rest = rest;
         this.target = target;
         this.intensity = intenisty;
+    }
+
+    
+    public double getIntensity() {
+        return intensity;
+    }
+
+    public void setIntensity(double intensity) {
+        this.intensity = intensity;
+    }
+
+    public DailyLog getDailyLog() {
+        return dailyLog;
+    }
+
+    public void setDailyLog(DailyLog dailyLog) {
+        this.dailyLog = dailyLog;
     }
 
     public double getOverallDistance() {

@@ -1,11 +1,14 @@
 package com.example.spring_backend.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Workout {
@@ -17,14 +20,18 @@ public class Workout {
    @GeneratedValue(strategy =GenerationType.IDENTITY )
    private Long id ; 
    
+   @OneToMany
+   private List<Set> sets ;
    
    public Workout(){}
 
-    public Workout(LocalDate date, double distance, Especiality especiality) {
+    public Workout(LocalDate date, double distance, Especiality especiality,Set set) {
         this.date = date;
         this.distance = distance;
         this.especiality = especiality;
-    }
+        sets.add(set);
+    
+      }
 
    public LocalDate getDate() {
       return date;
@@ -57,8 +64,4 @@ public class Workout {
    public void setId(Long id) {
       this.id = id;
    }
-
-  
-   
-   
 }

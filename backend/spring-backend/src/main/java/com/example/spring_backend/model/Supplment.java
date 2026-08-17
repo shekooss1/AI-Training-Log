@@ -1,0 +1,87 @@
+package com.example.spring_backend.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
+@Entity
+public class Supplment {
+ private String name ;
+ private double dose ;
+ private  double time ;
+ private String notes ;
+
+  @Id 
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+ private Long id ;
+@ManyToOne
+private DailyLog dailyLog ;
+
+ public Supplment(){}
+ 
+ 
+ public Supplment(String name, double dose, double time,String notes) {
+    this.name = name;
+    this.dose = dose;
+    this.time = time;
+    this.notes= notes;
+}
+
+
+ public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public double getDose() {
+    return dose;
+  }
+
+  public void setDose(double dose) {
+    this.dose = dose;
+  }
+
+  public double getTime() {
+    return time;
+  }
+
+  public void setTime(double time) {
+    this.time = time;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+
+  public String getNotes() {
+    return notes;
+  }
+
+
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
+
+
+  public DailyLog getDailyLog() {
+    return dailyLog;
+  }
+
+
+  public void setDailyLog(DailyLog dailyLog) {
+    this.dailyLog = dailyLog;
+  }
+
+
+ 
+}
