@@ -1,5 +1,6 @@
 package com.example.spring_backend.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -27,10 +28,10 @@ public class Swimmer {
  private Stroke stroke ;
  
  @OneToMany(mappedBy="swimmer",cascade=CascadeType.ALL,orphanRemoval=true)
- private List<PersonalBest> PB ;
+ private List<PersonalBest> PB = new ArrayList<>() ; 
 
  @OneToMany(mappedBy="swimmer",cascade=CascadeType.ALL,orphanRemoval=true)
- private List<DailyLog> dailyLog ;
+ private List<DailyLog> dailyLog = new ArrayList<>();
 
 public Swimmer(){}
 
@@ -43,6 +44,10 @@ public Swimmer(){}
         this.stroke = stroke;
     }
 
+
+public Swimmer(double age2, Especiality especiality2, String name2, Sex sex2, Stroke stroke2) {
+        //TODO Auto-generated constructor stub
+    }
 
 public String getName() {
     return name;

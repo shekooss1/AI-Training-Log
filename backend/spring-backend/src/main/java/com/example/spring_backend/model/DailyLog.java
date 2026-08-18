@@ -1,7 +1,10 @@
 package com.example.spring_backend.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -22,17 +25,18 @@ public class DailyLog {
 private Long id ;
 
 @OneToMany(mappedBy="dailyLog", cascade = CascadeType.ALL, orphanRemoval = true)
-List<Set> sets ;
+private List<Set> sets = new ArrayList<>() ;
 
 @OneToMany(mappedBy="dailyLog", cascade = CascadeType.ALL, orphanRemoval = true)
-List<Sleep> sleep ;
+private List<Sleep> sleep = new ArrayList<>();
 
 @OneToMany(mappedBy="dailyLog", cascade = CascadeType.ALL, orphanRemoval = true)
-List<Gym> gym ;
+private List<Gym> gym = new ArrayList<>();
 
 @OneToMany(mappedBy="dailyLog", cascade = CascadeType.ALL, orphanRemoval = true)
-List<Supplment> supplment ;
+private List<Supplment> supplment = new ArrayList<>();
 
+@JsonIgnore
 @ManyToOne
 private Swimmer swimmer ;
 
@@ -108,6 +112,15 @@ public Long getId() {
 public void setId(Long id) {
     this.id = id;
 }
+
+public Swimmer getSwimmer() {
+    return swimmer;
+}
+
+public void setSwimmer(Swimmer swimmer) {
+    this.swimmer = swimmer;
+}
+
 
 
 

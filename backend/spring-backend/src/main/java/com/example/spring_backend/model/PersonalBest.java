@@ -1,6 +1,9 @@
 package com.example.spring_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +19,8 @@ public class PersonalBest {
 @GeneratedValue(strategy=GenerationType.IDENTITY)
 private Long id ;
 
-@ManyToOne
+@JsonIgnore
+@ManyToOne(fetch=FetchType.LAZY)
 private Swimmer swimmer ;
 
  public PersonalBest(){}
@@ -66,6 +70,16 @@ private Swimmer swimmer ;
 
  public void setId(Long id) {
     this.id = id;
+ }
+
+
+ public Swimmer getSwimmer() {
+   return swimmer;
+ }
+
+
+ public void setSwimmer(Swimmer swimmer) {
+   this.swimmer = swimmer;
  }
 
  

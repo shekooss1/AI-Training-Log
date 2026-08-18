@@ -1,6 +1,6 @@
 package com.example.spring_backend.model;
 
-import org.hibernate.annotations.ManyToAny;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +17,7 @@ public class Gym {
  private String exercise, notes ;
 private double sets, reps, weight;
 
+@JsonIgnore
 @ManyToOne
 private DailyLog dailyLog ;
 
@@ -24,8 +25,8 @@ public Gym() {
 }
 
 
-public Gym(Long id, String exercise, String notes, double sets, double reps, double weight) {
-    this.id = id;
+public Gym(String exercise, String notes, double sets, double reps, double weight) {
+    
     this.exercise = exercise;
     this.notes = notes;
     this.sets = sets;

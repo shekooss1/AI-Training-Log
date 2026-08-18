@@ -1,6 +1,9 @@
 package com.example.spring_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +24,8 @@ public class Set {
     
     private double intensity ;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch=FetchType.LAZY)   
     private DailyLog dailyLog ;
 
     public Set(){}
@@ -36,15 +40,8 @@ public class Set {
     }
 
     
-    public double getIntensity() {
-        return intensity;
-    }
-
-    public void setIntensity(double intensity) {
-        this.intensity = intensity;
-    }
-
-    public DailyLog getDailyLog() {
+    
+     public DailyLog getDailyLog() {
         return dailyLog;
     }
 

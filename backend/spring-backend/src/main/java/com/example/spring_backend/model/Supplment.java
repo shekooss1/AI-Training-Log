@@ -1,6 +1,9 @@
 package com.example.spring_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +19,9 @@ public class Supplment {
   @Id 
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  private Long id ;
-@ManyToOne
+
+@JsonIgnore
+ @ManyToOne(fetch=FetchType.LAZY)
 private DailyLog dailyLog ;
 
  public Supplment(){}

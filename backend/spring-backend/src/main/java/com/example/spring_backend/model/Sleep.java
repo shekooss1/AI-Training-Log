@@ -1,6 +1,9 @@
 package com.example.spring_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,7 +18,8 @@ public class Sleep {
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  private Long id ;
 
- @ManyToOne
+ @JsonIgnore
+@ManyToOne(fetch=FetchType.LAZY)
 private DailyLog dailyLog ;
 
  public Sleep(){}
@@ -25,6 +29,11 @@ private DailyLog dailyLog ;
     this.hours = hours;
     this.rating = rating;
     this.notes = notes;
+}
+
+
+ public Sleep(double hours2, String notes2) {
+    //TODO Auto-generated constructor stub
 }
 
 
