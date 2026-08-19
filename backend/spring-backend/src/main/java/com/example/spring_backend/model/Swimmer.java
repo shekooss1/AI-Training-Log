@@ -46,8 +46,11 @@ public Swimmer(){}
 
 
 public Swimmer(double age2, Especiality especiality2, String name2, Sex sex2, Stroke stroke2) {
-        //TODO Auto-generated constructor stub
-    }
+age=age2;
+especiality=especiality2;
+name=name2;
+sex=sex2;
+stroke=stroke2;    }
 
 public String getName() {
     return name;

@@ -33,7 +33,8 @@ private DailyLog dailyLog ;
 
 
  public Sleep(double hours2, String notes2) {
-    //TODO Auto-generated constructor stub
+ hours=hours2;
+ notes=notes2;
 }
 
 
