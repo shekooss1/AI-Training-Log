@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,9 @@ public class Swimmer {
  
  private double age ;
 
+ @Column(unique = true)
+ private String email ;
+ 
  private Stroke stroke ;
  
  @OneToMany(mappedBy="swimmer",cascade=CascadeType.ALL,orphanRemoval=true)
@@ -35,10 +39,11 @@ public class Swimmer {
 
 public Swimmer(){}
 
-    public Swimmer( double age, Especiality especiality, String name, String password, Sex sex, Stroke stroke) {
+    public Swimmer( double age, Especiality especiality, String name, String email, String password, Sex sex, Stroke stroke) {
         this.age = age;
         this.especiality = especiality;
         this.name = name;
+        this.email=email;
         this.password = password;
         this.sex = sex;
         this.stroke = stroke;
@@ -124,6 +129,14 @@ public List<DailyLog> getDailyLog() {
 
 public void setDailyLog(List<DailyLog> dailyLog) {
     this.dailyLog = dailyLog;
+}
+
+public String getEmail() {
+    return email;
+}
+
+public void setEmail(String email) {
+    this.email = email;
 }
 
  
