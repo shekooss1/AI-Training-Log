@@ -55,4 +55,7 @@ public class SleepEntryService {
         sleepRepository.deleteById(sleepId);
         return true;
     }
+ public Optional<SleepDTO> getSleepById(Long id){
+    return sleepRepository.findById(id).map(SleepDTO::from);
+ }
 }

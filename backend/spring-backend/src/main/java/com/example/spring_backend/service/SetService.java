@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.spring_backend.DTOs.SetDTO;
-import com.example.spring_backend.model.DailyLog;
 import com.example.spring_backend.model.Set;
 import com.example.spring_backend.repository.DailyLogRepository;
 import com.example.spring_backend.repository.SetRepository;
@@ -59,4 +58,9 @@ public class SetService {
         setRepository.deleteById(setId);
         return true;
     }
+
+    public Optional<SetDTO> getSetById(Long id){
+       return setRepository.findById(id).map(SetDTO::from);
+    }
+    
 }

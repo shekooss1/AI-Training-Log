@@ -2,6 +2,7 @@ package com.example.spring_backend.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -61,4 +62,9 @@ public class PersonalBestService {
         personalBestRepository.deleteById(id);
         return true;
     }
+ 
+    public List<PersonalBestDTO> getAllPersonalBests(){
+         return personalBestRepository.findAll().stream().map(PersonalBestDTO::from).collect(Collectors.toList());
+    }
+
 }

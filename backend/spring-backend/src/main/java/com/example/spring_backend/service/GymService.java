@@ -2,12 +2,12 @@ package com.example.spring_backend.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.spring_backend.DTOs.GymDTO;
 import com.example.spring_backend.model.Gym;
+import com.example.spring_backend.repository.DailyLogRepository;
 import com.example.spring_backend.repository.GymRepository;
 
 import jakarta.transaction.Transactional;
@@ -15,49 +15,51 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class GymService {
-  GymRepository gymRepository ;
 
-  
- public GymService(GymRepository gymRepository) {
-    this.gymRepository = gymRepository;
-  }
+    private final GymRepository gymRepository;
+    private final DailyLogRepository dailyLogRepository;
 
- public List<GymDTO> getAllGym() {
-    return gymRepository.findAll()
-        .stream()
-        .map(GymDTO::from)
-        .collect(Collectors.toList());
-}
-
-public Optional<GymDTO> getGymById(Long id){
-  return gymRepository.findById(id) 
-  .map(GymDTO::from) ;
-}
-
-public GymDTO createDailyLog(GymDTO dto){
- Gym d = dto.toEntity() ;
- return GymDTO.from(gymRepository.save(d));
-}
-
-public Optional<GymDTO> updateDailyLog(Long id,GymDTO dto){
-  return gymRepository.findById(id).map(log -> {
-   log.setExercise(dto.exercise());
-   log.setNotes(dto.notes());
-   log.setWeight(dto.weight());
-
-   return GymDTO.from(gymRepository.save(log));
-   }); 
-
-  }
-  
-   public boolean deleteGym(Long id){
-    if(gymRepository.findById(id).isEmpty()){
-      return false ;
+    public GymService(GymRepository gymRepository, DailyLogRepository dailyLogRepository) {
+        this.gymRepository = gymRepository;
+        this.dailyLogRepository = dailyLogRepository;
     }
-     gymRepository.deleteById(id);
-    return true;
-   
-  }
 
-  }
+    public Optional<GymDTO> addGymToLog(Long dailyLogId, GymDTO dto) {
+        return dailyLogRepository.findById(dailyLogId).map(dailyLog -> {
+            Gym gym = dto.toEntity();
+            gym.setDailyLog(dailyLog);
+            Gym saved = gymRepository.save(gym);
+            return GymDTO.from(saved);
+        });
+    }
 
+    public List<GymDTO> getGymForLog(Long dailyLogId) {
+        return gymRepository.findByDailyLogId(dailyLogId)
+            .stream()
+            .map(GymDTO::from)
+            .toList();
+    }
+
+    public Optional<GymDTO> updateGym(Long gymId, GymDTO dto) {
+        return gymRepository.findById(gymId).map(gym -> {
+            gym.setExercise(dto.exercise());;
+            gym.setNotes(dto.notes());
+            gym.setReps(dto.reps());
+            gym.setSets(dto.sets());
+            gym.setWeight(dto.weight());
+            return GymDTO.from(gymRepository.save(gym));
+        });
+    }
+
+    public boolean deleteGym(Long sleepId) {
+        if (!gymRepository.existsById(sleepId)) {
+            return false;
+        }
+        gymRepository.deleteById(sleepId);
+        return true;
+    }
+  public Optional<GymDTO> getGymById( Long id){
+    return gymRepository.findById(id).map(GymDTO::from);
+}
+
+}

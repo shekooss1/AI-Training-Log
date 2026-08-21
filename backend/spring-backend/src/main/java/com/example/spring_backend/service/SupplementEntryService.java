@@ -57,4 +57,7 @@ public class SupplementEntryService {
         supplmentRepository.deleteById(supplementId);
         return true;
     }
+  public Optional<SupplmentDTO> getSupplmentById(Long id){
+    return supplmentRepository.findById(id).map(SupplmentDTO::from);
+ }
 }
