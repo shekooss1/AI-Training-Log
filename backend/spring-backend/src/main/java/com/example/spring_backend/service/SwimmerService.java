@@ -50,7 +50,7 @@ public class SwimmerService {
   public Optional<SwimmerDTO> updateSwimmer(Long id, SwimmerDTO dto) {
     return swimmerRepository.findById(id).map(swimmer -> {
       swimmerRepository.findByEmail(dto.email()).ifPresent(existing -> {
-        if (!existing.id().equals(id)) {
+        if (!existing.getId().equals(id)) {
           throw new EmailAlreadyInUseException(dto.email());
         }
       });

@@ -30,7 +30,7 @@ public DailyLogController(DailyLogService dls) {
     this.dls = dls;
 }
 
-@PostMapping("/api/dailylogs")
+@PostMapping
 public ResponseEntity<DailyLogDTO> createLog(@RequestBody DailyLogDTO dto) {
    try {
     DailyLogDTO created = dls.createDailyLog(dto);   
@@ -41,7 +41,7 @@ public ResponseEntity<DailyLogDTO> createLog(@RequestBody DailyLogDTO dto) {
 }
 }
 
-@GetMapping("/api/dailylogs")
+@GetMapping
 public ResponseEntity<List<DailyLogDTO>> getAll() {
 try {
    List<DailyLogDTO> list =  dls.getAllLogs();
