@@ -1,7 +1,8 @@
 package com.example.spring_backend.controller;
  
 import java.util.List;
- 
+
+import com.example.spring_backend.DTOs.SwimmerResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,9 +27,15 @@ public class SwimmerController {
   }
  
   @PostMapping
-  public ResponseEntity<SwimmerDTO> createSwimmer(@RequestBody SwimmerDTO dto) {
+  public SwimmerResponseDTO register(@RequestBody SwimmerDTO swimmerDTO) {
+    return ss.createSwimmer(swimmerDTO);
+  }
+  
+  
+  @PostMapping
+  public ResponseEntity<SwimmerResponseDTO> createSwimmer(@RequestBody SwimmerDTO dto) {
     try {
-      SwimmerDTO created = ss.createSwimmer(dto);
+      SwimmerResponseDTO created = ss.createSwimmer(dto);
       return ResponseEntity.status(HttpStatus.CREATED).body(created);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -36,9 +43,9 @@ public class SwimmerController {
   }
  
   @GetMapping
-  public ResponseEntity<List<SwimmerDTO>> getAll() {
+  public ResponseEntity<List<SwimmerResponseDTO>> getAll() {
     try {
-      List<SwimmerDTO> list = ss.getAllSwimmers();
+      List<SwimmerResponseDTO> list = ss.getAllSwimmers();
       return ResponseEntity.status(HttpStatus.OK).body(list);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -46,7 +53,7 @@ public class SwimmerController {
   }
  
   @GetMapping("/{id}")
-  public ResponseEntity<SwimmerDTO> getById(@PathVariable Long id) {
+  public ResponseEntity<SwimmerResponseDTO> getById(@PathVariable Long id) {
     try {
       return ss.getSwimmerById(id)
           .map(ResponseEntity::ok)
@@ -57,7 +64,7 @@ public class SwimmerController {
   }
  
   @PutMapping("/{id}")
-  public ResponseEntity<SwimmerDTO> updateSwimmer(@PathVariable Long id, @RequestBody SwimmerDTO dto) {
+  public ResponseEntity<SwimmerResponseDTO> updateSwimmer(@PathVariable Long id, @RequestBody SwimmerDTO dto) {
     try {
       return ss.updateSwimmer(id, dto)
           .map(ResponseEntity::ok)
