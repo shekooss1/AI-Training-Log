@@ -9,6 +9,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.example.spring_backend.service.MyUserDetailService;
@@ -16,10 +17,13 @@ import com.example.spring_backend.service.MyUserDetailService;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-   @Autowired
+
+    @Autowired
    MyUserDetailService userDetailsService ;
-   
-   @Bean
+
+
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
    return http
@@ -33,6 +37,7 @@ public class SecurityConfig {
 @Bean
  public AuthenticationProvider authProvider(){
     DaoAuthenticationProvider pro = new DaoAuthenticationProvider(userDetailsService);
+    pro.setPasswordEncoder(new BCryptPasswordEncoder(12));
     return pro ;
  }
 }

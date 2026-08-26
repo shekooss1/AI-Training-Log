@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.spring_backend.DTOs.SwimmerResponseDTO;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.spring_backend.DTOs.SwimmerDTO;
@@ -16,9 +18,9 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class SwimmerService {
   SwimmerRepository swimmerRepository;
-
+   private BCryptPasswordEncoder encoder =  new BCryptPasswordEncoder(12);
   private static class EmailAlreadyInUseException extends RuntimeException {
-    private EmailAlreadyInUseException(String email) {
+    public EmailAlreadyInUseException(String email) {
       super("Email is already in use: " + email);
     }
   }
@@ -27,27 +29,28 @@ public class SwimmerService {
     this.swimmerRepository = swimmerRepository;
   }
 
-  public List<SwimmerDTO> getAllSwimmers() {
+  public List<SwimmerResponseDTO> getAllSwimmers() {
     return swimmerRepository.findAll()
         .stream()
-        .map(SwimmerDTO::from)
+        .map(SwimmerResponseDTO::from)
         .collect(Collectors.toList());
   }
 
-  public Optional<SwimmerDTO> getSwimmerById(Long id) {
+  public Optional<SwimmerResponseDTO> getSwimmerById(Long id) {
     return swimmerRepository.findById(id)
-        .map(SwimmerDTO::from);
+        .map(SwimmerResponseDTO::from);
   }
 
-  public SwimmerDTO createSwimmer(SwimmerDTO dto) {
+  public SwimmerResponseDTO createSwimmer(SwimmerDTO dto) {
+    dto = new SwimmerDTO(dto.id(), dto.age(),dto.especiality(),dto.name(),dto.email(),encoder.encode(dto.password()), dto.sex(), dto.stroke());
     if (swimmerRepository.findByEmail(dto.email()).isPresent()) {
       throw new EmailAlreadyInUseException(dto.email());
     }
     Swimmer s = dto.toEntity();
-    return SwimmerDTO.from(swimmerRepository.save(s));
+    return SwimmerResponseDTO.from(swimmerRepository.save(s));
   }
 
-  public Optional<SwimmerDTO> updateSwimmer(Long id, SwimmerDTO dto) {
+  public Optional<SwimmerResponseDTO> updateSwimmer(Long id, SwimmerDTO dto) {
     return swimmerRepository.findById(id).map(swimmer -> {
       swimmerRepository.findByEmail(dto.email()).ifPresent(existing -> {
         if (!existing.getId().equals(id)) {
@@ -57,13 +60,13 @@ public class SwimmerService {
 
       swimmer.setName(dto.name());
       swimmer.setEmail(dto.email());
-      swimmer.setPassword(dto.password());
+      swimmer.setPassword(encoder.encode(dto.password()));
       swimmer.setSex(dto.sex());
       swimmer.setAge(dto.age());
       swimmer.setStroke(dto.stroke());
       swimmer.setEspeciality(dto.especiality());
 
-      return SwimmerDTO.from(swimmerRepository.save(swimmer));
+      return SwimmerResponseDTO.from(swimmerRepository.save(swimmer));
     });
   }
 
