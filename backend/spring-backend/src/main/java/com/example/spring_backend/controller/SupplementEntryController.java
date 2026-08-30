@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,9 +28,9 @@ public class SupplementEntryController {
     }
  
     @PostMapping
-    public ResponseEntity<SupplmentDTO> create(@PathVariable Long logId, @RequestBody SupplmentDTO dto) {
+    public ResponseEntity<SupplmentDTO> create(@PathVariable Long logId, @RequestBody SupplmentDTO dto,Authentication authentication) {
         try {
-            return supplementEntryService.addSupplementToLog(logId, dto)
+            return supplementEntryService.addSupplementToLog(logId, dto,authentication.getName())
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
         
@@ -39,18 +40,18 @@ public class SupplementEntryController {
     }
  
     @GetMapping
-    public ResponseEntity<List<SupplmentDTO>> getAll(@PathVariable Long logId) {
+    public ResponseEntity<List<SupplmentDTO>> getAll(@PathVariable Long logId, Authentication authentication) {
         try {
-            return ResponseEntity.ok(supplementEntryService.getSupplementsForLog(logId));
+            return ResponseEntity.ok(supplementEntryService.getSupplementsForLog(logId, authentication.getName()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
  
     @GetMapping("/{id}")
-    public ResponseEntity<SupplmentDTO> getById(@PathVariable Long logId, @PathVariable Long id) {
+    public ResponseEntity<SupplmentDTO> getById(@PathVariable Long logId, @PathVariable Long id, Authentication authentication) {
         try {
-            return supplementEntryService.getSupplmentById(id)
+            return supplementEntryService.getSupplmentById(id,authentication.getName())
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -59,9 +60,9 @@ public class SupplementEntryController {
     }
  
     @PutMapping("/{id}")
-    public ResponseEntity<SupplmentDTO> update(@PathVariable Long logId, @PathVariable Long id, @RequestBody SupplmentDTO dto) {
+    public ResponseEntity<SupplmentDTO> update(@PathVariable Long logId, @PathVariable Long id, @RequestBody SupplmentDTO dto, Authentication authentication) {
         try {
-            return supplementEntryService.updateSupplement(id, dto)
+            return supplementEntryService.updateSupplement(id, dto, authentication.getName())
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -70,9 +71,9 @@ public class SupplementEntryController {
     }
  
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long logId, @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long logId, @PathVariable Long id,Authentication authentication) {
         try {
-            return supplementEntryService.deleteSupplement(id)
+            return supplementEntryService.deleteSupplement(id, authentication.getName())
                     ? ResponseEntity.noContent().build()
                     : ResponseEntity.notFound().build();
         } catch (Exception e) {

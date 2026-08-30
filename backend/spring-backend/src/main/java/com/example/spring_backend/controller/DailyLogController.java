@@ -1,5 +1,6 @@
 package com.example.spring_backend.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +32,10 @@ public DailyLogController(DailyLogService dls) {
 }
 
 @PostMapping
-public ResponseEntity<DailyLogDTO> createLog(@RequestBody DailyLogDTO dto) {
+public ResponseEntity<DailyLogDTO> createLog(@RequestBody DailyLogDTO dto,Authentication authentication) {
    try {
-    DailyLogDTO created = dls.createDailyLog(dto);   
+String email=authentication.getName();
+    DailyLogDTO created = dls.createDailyLog(dto,email);
        return  ResponseEntity.status(HttpStatus.CREATED).body(created);
    } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -42,9 +44,10 @@ public ResponseEntity<DailyLogDTO> createLog(@RequestBody DailyLogDTO dto) {
 }
 
 @GetMapping
-public ResponseEntity<List<DailyLogDTO>> getAll() {
+public ResponseEntity<List<DailyLogDTO>> getAll(Authentication authentication) {
 try {
-   List<DailyLogDTO> list =  dls.getAllLogs();
+String email=authentication.getName();
+   List<DailyLogDTO> list =  dls.getAllLogs(email);
    return ResponseEntity.status(HttpStatus.OK).body(list);
 
 } catch (Exception e) {
@@ -54,9 +57,10 @@ try {
 }
 
 @GetMapping("/{id}")
-public ResponseEntity<DailyLogDTO> getById(@PathVariable Long id) {
+public ResponseEntity<DailyLogDTO> getById(@PathVariable Long id,Authentication authentication) {
     try {
- return dls.getDailyLogById(id)
+ String email = authentication.getName();
+        return dls.getDailyLogById(id,email)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
@@ -66,9 +70,10 @@ public ResponseEntity<DailyLogDTO> getById(@PathVariable Long id) {
     }
 }
 @PutMapping("/{id}")
-public ResponseEntity<DailyLogDTO> updateLog(@PathVariable Long id, @RequestBody DailyLogDTO dto) {
+public ResponseEntity<DailyLogDTO> updateLog(@PathVariable Long id, @RequestBody DailyLogDTO dto,Authentication authentication) {
     try {
-        return dls.updateDailyLog(id, dto).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        String email = authentication.getName();
+        return dls.updateDailyLog(id, dto,email).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
         
     } catch (Exception e) {
                          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -76,9 +81,10 @@ public ResponseEntity<DailyLogDTO> updateLog(@PathVariable Long id, @RequestBody
     }
 }
 @DeleteMapping("/{id}")
-public ResponseEntity<Void> deleteLog(@PathVariable Long id) {
+public ResponseEntity<Void> deleteLog(@PathVariable Long id, Authentication authentication) {
     try {
-        boolean deleted = dls.deleteDailyLog(id);
+        String email = authentication.getName();
+        boolean deleted = dls.deleteDailyLog(id,email);
         if (deleted) {
             return ResponseEntity.noContent().build();
         }

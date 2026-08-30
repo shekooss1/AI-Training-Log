@@ -3,20 +3,17 @@ package com.example.spring_backend.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "swimmers")
 public class Swimmer {
  private String name , password  ;
+
+ @Enumerated(EnumType.STRING)
  private Especiality especiality  ;
+
+ @Enumerated(EnumType.STRING)
  private Sex sex ;
 
  
@@ -28,7 +25,8 @@ public class Swimmer {
 
  @Column(unique = true)
  private String email ;
- 
+
+ @Enumerated(EnumType.STRING)
  private Stroke stroke ;
  
  @OneToMany(mappedBy="swimmer",cascade=CascadeType.ALL,orphanRemoval=true)

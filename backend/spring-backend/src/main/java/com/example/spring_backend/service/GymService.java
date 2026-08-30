@@ -24,8 +24,8 @@ public class GymService {
         this.dailyLogRepository = dailyLogRepository;
     }
 
-    public Optional<GymDTO> addGymToLog(Long dailyLogId, GymDTO dto) {
-        return dailyLogRepository.findById(dailyLogId).map(dailyLog -> {
+    public Optional<GymDTO> addGymToLog(Long dailyLogId, GymDTO dto,String email) {
+        return dailyLogRepository.findByIdAndSwimmer_Email(dailyLogId,email).map(dailyLog -> {
             Gym gym = dto.toEntity();
             gym.setDailyLog(dailyLog);
             Gym saved = gymRepository.save(gym);
@@ -33,15 +33,15 @@ public class GymService {
         });
     }
 
-    public List<GymDTO> getGymForLog(Long dailyLogId) {
-        return gymRepository.findByDailyLogId(dailyLogId)
+    public List<GymDTO> getGymForLog(Long dailyLogId,String email) {
+        return gymRepository.findAllByDailyLog_IdAndDailyLog_Swimmer_Email(dailyLogId,email)
             .stream()
             .map(GymDTO::from)
             .toList();
     }
 
-    public Optional<GymDTO> updateGym(Long gymId, GymDTO dto) {
-        return gymRepository.findById(gymId).map(gym -> {
+    public Optional<GymDTO> updateGym(Long gymId, GymDTO dto, String email) {
+        return gymRepository.findByIdAndDailyLog_Swimmer_Email(gymId,email).map(gym -> {
             gym.setExercise(dto.exercise());;
             gym.setNotes(dto.notes());
             gym.setReps(dto.reps());
@@ -51,15 +51,15 @@ public class GymService {
         });
     }
 
-    public boolean deleteGym(Long sleepId) {
-        if (!gymRepository.existsById(sleepId)) {
+    public boolean deleteGym(Long sleepId,String email) {
+        if (gymRepository.findByIdAndDailyLog_Swimmer_Email(sleepId,email).isEmpty()) {
             return false;
         }
         gymRepository.deleteById(sleepId);
         return true;
     }
-  public Optional<GymDTO> getGymById( Long id){
-    return gymRepository.findById(id).map(GymDTO::from);
+  public Optional<GymDTO> getGymById( Long id,String email) {
+    return gymRepository.findByIdAndDailyLog_Swimmer_Email(id,email).map(GymDTO::from);
 }
 
 }

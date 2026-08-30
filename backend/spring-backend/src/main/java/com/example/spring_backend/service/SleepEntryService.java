@@ -24,8 +24,8 @@ public class SleepEntryService {
         this.dailyLogRepository = dailyLogRepository;
     }
 
-    public Optional<SleepDTO> addSleepToLog(Long dailyLogId, SleepDTO dto) {
-        return dailyLogRepository.findById(dailyLogId).map(dailyLog -> {
+    public Optional<SleepDTO> addSleepToLog(Long dailyLogId, SleepDTO dto,String email) {
+        return dailyLogRepository.findByIdAndSwimmer_Email(dailyLogId,email).map(dailyLog -> {
             Sleep sleep = dto.toEntity();
             sleep.setDailyLog(dailyLog);
             Sleep saved = sleepRepository.save(sleep);
@@ -33,29 +33,29 @@ public class SleepEntryService {
         });
     }
 
-    public List<SleepDTO> getSleepForLog(Long dailyLogId) {
-        return sleepRepository.findByDailyLogId(dailyLogId)
+    public List<SleepDTO> getSleepForLog(Long dailyLogId,String email) {
+        return sleepRepository.findAllByDailyLog_IdAndDailyLog_Swimmer_Email(dailyLogId,email)
             .stream()
             .map(SleepDTO::from)
             .toList();
     }
 
-    public Optional<SleepDTO> updateSleep(Long sleepId, SleepDTO dto) {
-        return sleepRepository.findById(sleepId).map(sleep -> {
+    public Optional<SleepDTO> updateSleep(Long sleepId, SleepDTO dto,String email) {
+        return sleepRepository.findByIdAndDailyLog_Swimmer_Email(sleepId,email).map(sleep -> {
             sleep.setHours(dto.hours());
             sleep.setNotes(dto.notes());
             return SleepDTO.from(sleepRepository.save(sleep));
         });
     }
 
-    public boolean deleteSleep(Long sleepId) {
-        if (!sleepRepository.existsById(sleepId)) {
+    public boolean deleteSleep(Long sleepId,String email) {
+        if (sleepRepository.findByIdAndDailyLog_Swimmer_Email(sleepId,email).isEmpty()) {
             return false;
         }
         sleepRepository.deleteById(sleepId);
         return true;
     }
- public Optional<SleepDTO> getSleepById(Long id){
-    return sleepRepository.findById(id).map(SleepDTO::from);
+ public Optional<SleepDTO> getSleepById(Long id,String email) {
+    return sleepRepository.findByIdAndDailyLog_Swimmer_Email(id,email).map(SleepDTO::from);
  }
 }

@@ -10,5 +10,6 @@ import com.example.spring_backend.model.Swimmer;
 public interface SwimmerRepository extends JpaRepository<Swimmer, Long>{
 
     Optional<Swimmer> findByEmail(String email);
+    Optional<Swimmer> findByIdAndEmail(Long id, String email);
 
 }

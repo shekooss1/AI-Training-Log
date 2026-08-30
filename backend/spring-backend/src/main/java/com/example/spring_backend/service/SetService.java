@@ -24,8 +24,8 @@ public class SetService {
         this.dailyLogRepository = dailyLogRepository;
     }
 
-    public Optional<SetDTO> addSetToLog(Long dailyLogId, SetDTO dto) {
-        return dailyLogRepository.findById(dailyLogId).map(dailyLog -> {
+    public Optional<SetDTO> addSetToLog(Long dailyLogId, SetDTO dto, String email) {
+        return dailyLogRepository.findByIdAndSwimmer_Email(dailyLogId,email).map(dailyLog -> {
             Set set = dto.toEntity();
             set.setDailyLog(dailyLog);
             Set saved = setRepository.save(set);
@@ -33,15 +33,15 @@ public class SetService {
         });
     }
 
-    public List<SetDTO> getSetsForLog(Long dailyLogId) {
-        return setRepository.findByDailyLogId(dailyLogId)
+    public List<SetDTO> getSetsForLog(Long dailyLogId,String email) {
+        return setRepository.findAllByDailyLog_IdAndDailyLog_Swimmer_Email(dailyLogId,email)
             .stream()
             .map(SetDTO::from)
             .toList();
     }
 
-    public Optional<SetDTO> updateSet(Long setId, SetDTO dto) {
-        return setRepository.findById(setId).map(set -> {
+    public Optional<SetDTO> updateSet(Long setId, SetDTO dto,String email) {
+        return setRepository.findByIdAndDailyLog_Swimmer_Email(setId,email).map(set -> {
             set.setReps(dto.reps());
             set.setDistance(dto.distance());
             set.setRest(dto.rest());
@@ -51,16 +51,16 @@ public class SetService {
         });
     }
 
-    public boolean deleteSet(Long setId) {
-        if (!setRepository.existsById(setId)) {
+    public boolean deleteSet(Long setId, String email) {
+        if (setRepository.findByIdAndDailyLog_Swimmer_Email(setId, email).isEmpty()) {
             return false;
         }
         setRepository.deleteById(setId);
         return true;
     }
 
-    public Optional<SetDTO> getSetById(Long id){
-       return setRepository.findById(id).map(SetDTO::from);
+    public Optional<SetDTO> getSetById(Long id,String email) {
+       return setRepository.findByIdAndDailyLog_Swimmer_Email(id,email).map(SetDTO::from);
     }
     
 }
