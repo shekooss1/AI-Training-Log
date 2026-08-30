@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,28 +27,28 @@ public class SleepEntryController {
     }
  
     @PostMapping
-    public ResponseEntity<SleepDTO> create(@PathVariable Long logId, @RequestBody SleepDTO dto) {
+    public ResponseEntity<SleepDTO> create(@PathVariable Long logId, @RequestBody SleepDTO dto, Authentication authentication) {
         try {
             return
-             sleepEntryService.addSleepToLog(logId, dto).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+             sleepEntryService.addSleepToLog(logId, dto,authentication.getName()).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
              } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
  
     @GetMapping
-    public ResponseEntity<List<SleepDTO>> getAll(@PathVariable Long logId) {
+    public ResponseEntity<List<SleepDTO>> getAll(@PathVariable Long logId,Authentication authentication) {
         try {
-            return ResponseEntity.ok(sleepEntryService.getSleepForLog(logId));
+            return ResponseEntity.ok(sleepEntryService.getSleepForLog(logId,authentication.getName()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
  
     @GetMapping("/{id}")
-    public ResponseEntity<SleepDTO> getById(@PathVariable Long logId, @PathVariable Long id) {
+    public ResponseEntity<SleepDTO> getById(@PathVariable Long logId, @PathVariable Long id,Authentication authentication) {
         try {
-            return sleepEntryService.getSleepById(id)
+            return sleepEntryService.getSleepById(id,authentication.getName())
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -56,9 +57,9 @@ public class SleepEntryController {
     }
  
     @PutMapping("/{id}")
-    public ResponseEntity<SleepDTO> update(@PathVariable Long logId, @PathVariable Long id, @RequestBody SleepDTO dto) {
+    public ResponseEntity<SleepDTO> update(@PathVariable Long logId, @PathVariable Long id, @RequestBody SleepDTO dto, Authentication authentication) {
         try {
-            return sleepEntryService.updateSleep(id, dto)
+            return sleepEntryService.updateSleep(id, dto, authentication.getName())
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -67,9 +68,9 @@ public class SleepEntryController {
     }
  
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long logId, @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long logId, @PathVariable Long id,Authentication authentication) {
         try {
-            return sleepEntryService.deleteSleep(id)
+            return sleepEntryService.deleteSleep(id, authentication.getName())
                     ? ResponseEntity.noContent().build()
                     : ResponseEntity.notFound().build();
         } catch (Exception e) {

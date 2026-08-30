@@ -5,6 +5,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.example.spring_backend.DTOs.SwimmerResponseDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +23,16 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class SwimmerService {
   SwimmerRepository swimmerRepository;
-   private BCryptPasswordEncoder encoder =  new BCryptPasswordEncoder(12);
+   public BCryptPasswordEncoder encoder =  new BCryptPasswordEncoder(12);
+
+
+   @Autowired
+   JwtService jwtService;
+   @Autowired
+   AuthenticationManager authManager;
+
+
+
   private static class EmailAlreadyInUseException extends RuntimeException {
     public EmailAlreadyInUseException(String email) {
       super("Email is already in use: " + email);
@@ -36,8 +50,8 @@ public class SwimmerService {
         .collect(Collectors.toList());
   }
 
-  public Optional<SwimmerResponseDTO> getSwimmerById(Long id) {
-    return swimmerRepository.findById(id)
+  public Optional<SwimmerResponseDTO> getSwimmerById(Long id,String email) {
+    return swimmerRepository.findByIdAndEmail(id,email)
         .map(SwimmerResponseDTO::from);
   }
 
@@ -50,8 +64,8 @@ public class SwimmerService {
     return SwimmerResponseDTO.from(swimmerRepository.save(s));
   }
 
-  public Optional<SwimmerResponseDTO> updateSwimmer(Long id, SwimmerDTO dto) {
-    return swimmerRepository.findById(id).map(swimmer -> {
+  public Optional<SwimmerResponseDTO> updateSwimmer(Long id, SwimmerDTO dto,String email) {
+    return swimmerRepository.findByIdAndEmail(id,email).map(swimmer -> {
       swimmerRepository.findByEmail(dto.email()).ifPresent(existing -> {
         if (!existing.getId().equals(id)) {
           throw new EmailAlreadyInUseException(dto.email());
@@ -70,8 +84,8 @@ public class SwimmerService {
     });
   }
 
-  public boolean deleteSwimmer(Long id) {
-    if (swimmerRepository.findById(id).isEmpty()) {
+  public boolean deleteSwimmer(Long id,String email) {
+    if (swimmerRepository.findByIdAndEmail(id,email).isEmpty()) {
       return false;
     }
     swimmerRepository.deleteById(id);

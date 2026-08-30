@@ -24,8 +24,8 @@ public class SupplementEntryService {
         this.dailyLogRepository = dailyLogRepository;
     }
 
-    public Optional<SupplmentDTO> addSupplementToLog(Long dailyLogId, SupplmentDTO dto) {
-        return dailyLogRepository.findById(dailyLogId).map(dailyLog -> {
+    public Optional<SupplmentDTO> addSupplementToLog(Long dailyLogId, SupplmentDTO dto,String email) {
+        return dailyLogRepository.findByIdAndSwimmer_Email(dailyLogId,email).map(dailyLog -> {
             Supplment supplment = dto.toEntity();
             supplment.setDailyLog(dailyLog);
             Supplment saved = supplmentRepository.save(supplment);
@@ -33,15 +33,15 @@ public class SupplementEntryService {
         });
     }
 
-    public List<SupplmentDTO> getSupplementsForLog(Long dailyLogId) {
-        return supplmentRepository.findByDailyLogId(dailyLogId)
+    public List<SupplmentDTO> getSupplementsForLog(Long dailyLogId,String email) {
+        return supplmentRepository.findAllByDailyLog_IdAndDailyLog_Swimmer_Email(dailyLogId,email)
             .stream()
             .map(SupplmentDTO::from)
             .toList();
     }
 
-    public Optional<SupplmentDTO> updateSupplement(Long supplementId, SupplmentDTO dto) {
-        return supplmentRepository.findById(supplementId).map(supplment -> {
+    public Optional<SupplmentDTO> updateSupplement(Long supplementId, SupplmentDTO dto,String email) {
+        return supplmentRepository.findByIdAndDailyLog_Swimmer_Email(supplementId,email).map(supplment -> {
             supplment.setName(dto.name());
             supplment.setDose(dto.dose());
             supplment.setTime(dto.time());
@@ -50,14 +50,15 @@ public class SupplementEntryService {
         });
     }
 
-    public boolean deleteSupplement(Long supplementId) {
-        if (!supplmentRepository.existsById(supplementId)) {
+    public boolean deleteSupplement(Long supplementId,String email) {
+        if (supplmentRepository.findByIdAndDailyLog_Swimmer_Email(supplementId,email).isEmpty()) {
             return false;
         }
         supplmentRepository.deleteById(supplementId);
         return true;
     }
-  public Optional<SupplmentDTO> getSupplmentById(Long id){
-    return supplmentRepository.findById(id).map(SupplmentDTO::from);
+  public Optional<SupplmentDTO> getSupplmentById(Long id
+                                                 ,String email){
+    return supplmentRepository.findByIdAndDailyLog_Swimmer_Email(id,email).map(SupplmentDTO::from);
  }
 }

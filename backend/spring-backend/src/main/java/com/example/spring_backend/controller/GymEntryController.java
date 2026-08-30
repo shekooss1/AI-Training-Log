@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,9 +28,9 @@ public class GymEntryController {
     }
  
     @PostMapping
-    public ResponseEntity<GymDTO> create(@PathVariable Long logId, @RequestBody GymDTO dto) {
+    public ResponseEntity<GymDTO> create(@PathVariable Long logId, @RequestBody GymDTO dto, Authentication authentication) {
         try {
-             return gymEntryService.addGymToLog(logId, dto)
+             return gymEntryService.addGymToLog(logId, dto,authentication.getName())
              .map(ResponseEntity::ok)
              .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -38,18 +39,18 @@ public class GymEntryController {
     }
  
     @GetMapping
-    public ResponseEntity<List<GymDTO>> getAll(@PathVariable Long logId) {
+    public ResponseEntity<List<GymDTO>> getAll(@PathVariable Long logId,Authentication authentication) {
         try {
-            return ResponseEntity.ok(gymEntryService.getGymForLog(logId));
+            return ResponseEntity.ok(gymEntryService.getGymForLog(logId, authentication.getName()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
  
     @GetMapping("/{id}")
-    public ResponseEntity<GymDTO> getById(@PathVariable Long logId, @PathVariable Long id) {
+    public ResponseEntity<GymDTO> getById(@PathVariable Long logId, @PathVariable Long id,Authentication authentication) {
         try {
-            return gymEntryService.getGymById(id)
+            return gymEntryService.getGymById(id, authentication.getName())
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -58,9 +59,9 @@ public class GymEntryController {
     }
  
     @PutMapping("/{id}")
-    public ResponseEntity<GymDTO> update(@PathVariable Long logId, @PathVariable Long id, @RequestBody GymDTO dto) {
+    public ResponseEntity<GymDTO> update(@PathVariable Long logId, @PathVariable Long id, @RequestBody GymDTO dto,Authentication authentication) {
         try {
-            return gymEntryService.updateGym(id, dto)
+            return gymEntryService.updateGym(id, dto, authentication.getName())
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -69,9 +70,9 @@ public class GymEntryController {
     }
  
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long logId, @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long logId, @PathVariable Long id,Authentication authentication) {
         try {
-            return gymEntryService.deleteGym(id)
+            return gymEntryService.deleteGym(id, authentication.getName())
                     ? ResponseEntity.noContent().build()
                     : ResponseEntity.notFound().build();
         } catch (Exception e) {

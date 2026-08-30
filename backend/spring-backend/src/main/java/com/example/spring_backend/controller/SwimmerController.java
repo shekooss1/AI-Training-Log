@@ -1,7 +1,8 @@
 package com.example.spring_backend.controller;
- 
+
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import com.example.spring_backend.DTOs.SwimmerResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,25 +14,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
- 
+
 import com.example.spring_backend.DTOs.SwimmerDTO;
 import com.example.spring_backend.service.SwimmerService;
- 
+
 @RestController
 @RequestMapping("/api/swimmers")
 public class SwimmerController {
   SwimmerService ss;
- 
+
   public SwimmerController(SwimmerService ss) {
     this.ss = ss;
   }
- 
-  @PostMapping
-  public SwimmerResponseDTO register(@RequestBody SwimmerDTO swimmerDTO) {
-    return ss.createSwimmer(swimmerDTO);
-  }
-  
-  
+
+
+
   @PostMapping
   public ResponseEntity<SwimmerResponseDTO> createSwimmer(@RequestBody SwimmerDTO dto) {
     try {
@@ -41,43 +38,38 @@ public class SwimmerController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
- 
-  @GetMapping
-  public ResponseEntity<List<SwimmerResponseDTO>> getAll() {
-    try {
-      List<SwimmerResponseDTO> list = ss.getAllSwimmers();
-      return ResponseEntity.status(HttpStatus.OK).body(list);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
- 
+
+
+
   @GetMapping("/{id}")
-  public ResponseEntity<SwimmerResponseDTO> getById(@PathVariable Long id) {
+  public ResponseEntity<SwimmerResponseDTO> getById(@PathVariable Long id,Authentication authentication) {
     try {
-      return ss.getSwimmerById(id)
+      String email = authentication.getName();
+      return ss.getSwimmerById(id,email)
           .map(ResponseEntity::ok)
           .orElse(ResponseEntity.notFound().build());
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
- 
+
   @PutMapping("/{id}")
-  public ResponseEntity<SwimmerResponseDTO> updateSwimmer(@PathVariable Long id, @RequestBody SwimmerDTO dto) {
+  public ResponseEntity<SwimmerResponseDTO> updateSwimmer(@PathVariable Long id, @RequestBody SwimmerDTO dto,Authentication authentication) {
     try {
-      return ss.updateSwimmer(id, dto)
+    String email = authentication.getName();
+      return ss.updateSwimmer(id, dto,email)
           .map(ResponseEntity::ok)
           .orElse(ResponseEntity.notFound().build());
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
- 
+
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteSwimmer(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteSwimmer(@PathVariable Long id,Authentication authentication) {
     try {
-      boolean deleted = ss.deleteSwimmer(id);
+      String email = authentication.getName();
+      boolean deleted = ss.deleteSwimmer(id,email);
       if (deleted) {
         return ResponseEntity.noContent().build();
       }
