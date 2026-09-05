@@ -2,6 +2,8 @@ package com.example.spring_backend.controller;
 
 import java.util.List;
 
+import com.example.spring_backend.DTOs.SwimmerUpdateDto;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import com.example.spring_backend.DTOs.SwimmerResponseDTO;
 import org.springframework.http.HttpStatus;
@@ -21,63 +23,43 @@ import com.example.spring_backend.service.SwimmerService;
 @RestController
 @RequestMapping("/api/swimmers")
 public class SwimmerController {
-  SwimmerService ss;
+    SwimmerService ss;
 
-  public SwimmerController(SwimmerService ss) {
-    this.ss = ss;
-  }
-
-
-
-  @PostMapping
-  public ResponseEntity<SwimmerResponseDTO> createSwimmer(@RequestBody SwimmerDTO dto) {
-    try {
-      SwimmerResponseDTO created = ss.createSwimmer(dto);
-      return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public SwimmerController(SwimmerService ss) {
+        this.ss = ss;
     }
-  }
 
 
-
-  @GetMapping("/{id}")
-  public ResponseEntity<SwimmerResponseDTO> getById(@PathVariable Long id,Authentication authentication) {
-    try {
-      String email = authentication.getName();
-      return ss.getSwimmerById(id,email)
-          .map(ResponseEntity::ok)
-          .orElse(ResponseEntity.notFound().build());
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @PostMapping
+    public ResponseEntity<SwimmerResponseDTO> createSwimmer(@RequestBody @Valid SwimmerDTO dto) {
+        SwimmerResponseDTO created = ss.createSwimmer(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
-  }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<SwimmerResponseDTO> updateSwimmer(@PathVariable Long id, @RequestBody SwimmerDTO dto,Authentication authentication) {
-    try {
-    String email = authentication.getName();
-      return ss.updateSwimmer(id, dto,email)
-          .map(ResponseEntity::ok)
-          .orElse(ResponseEntity.notFound().build());
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SwimmerResponseDTO> getById(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        return ss.getSwimmerById(id, email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
-  }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteSwimmer(@PathVariable Long id,Authentication authentication) {
-    try {
-      String email = authentication.getName();
-      boolean deleted = ss.deleteSwimmer(id,email);
-      if (deleted) {
+    @PutMapping("/{id}")
+    public ResponseEntity<SwimmerResponseDTO> updateSwimmer(@PathVariable Long id, @RequestBody @Valid SwimmerUpdateDto dto, Authentication authentication) {
+        String email = authentication.getName();
+        return ss.updateSwimmer(id, dto, email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSwimmer(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        ss.deleteSwimmer(id, email);
         return ResponseEntity.noContent().build();
-      }
-      return ResponseEntity.notFound().build();
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
+}
 }
  
 

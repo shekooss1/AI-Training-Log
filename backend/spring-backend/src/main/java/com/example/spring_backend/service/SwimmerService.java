@@ -5,11 +5,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.example.spring_backend.DTOs.SwimmerResponseDTO;
+import com.example.spring_backend.DTOs.SwimmerUpdateDto;
+import com.example.spring_backend.exception.EmailAlreadyInUseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,22 +37,12 @@ public class SwimmerService {
 
 
 
-  private static class EmailAlreadyInUseException extends RuntimeException {
-    public EmailAlreadyInUseException(String email) {
-      super("Email is already in use: " + email);
-    }
-  }
+
 
   public SwimmerService(SwimmerRepository swimmerRepository) {
     this.swimmerRepository = swimmerRepository;
   }
 
-  public List<SwimmerResponseDTO> getAllSwimmers() {
-    return swimmerRepository.findAll()
-        .stream()
-        .map(SwimmerResponseDTO::from)
-        .collect(Collectors.toList());
-  }
 
   public Optional<SwimmerResponseDTO> getSwimmerById(Long id,String email) {
     return swimmerRepository.findByIdAndEmail(id,email)
@@ -64,7 +58,7 @@ public class SwimmerService {
     return SwimmerResponseDTO.from(swimmerRepository.save(s));
   }
 
-  public Optional<SwimmerResponseDTO> updateSwimmer(Long id, SwimmerDTO dto,String email) {
+  public Optional<SwimmerResponseDTO> updateSwimmer(Long id, SwimmerUpdateDto dto, String email) {
     return swimmerRepository.findByIdAndEmail(id,email).map(swimmer -> {
       swimmerRepository.findByEmail(dto.email()).ifPresent(existing -> {
         if (!existing.getId().equals(id)) {
@@ -74,7 +68,9 @@ public class SwimmerService {
 
       swimmer.setName(dto.name());
       swimmer.setEmail(dto.email());
-      swimmer.setPassword(encoder.encode(dto.password()));
+      if (dto.password() != null) {
+        swimmer.setPassword(encoder.encode(dto.password()));
+      }
       swimmer.setSex(dto.sex());
       swimmer.setAge(dto.age());
       swimmer.setStroke(dto.stroke());
@@ -84,12 +80,11 @@ public class SwimmerService {
     });
   }
 
-  public boolean deleteSwimmer(Long id,String email) {
-    if (swimmerRepository.findByIdAndEmail(id,email).isEmpty()) {
-      return false;
+  public void deleteSwimmer(Long id, String email) {
+    if (swimmerRepository.findByIdAndEmail(id, email).isEmpty()) {
+      throw new UsernameNotFoundException(swimmerRepository.findById(id).get().getEmail());
     }
     swimmerRepository.deleteById(id);
-    return true;
   }
 
 }

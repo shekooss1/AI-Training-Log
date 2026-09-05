@@ -2,6 +2,7 @@ package com.example.spring_backend.controller;
  
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -28,55 +29,36 @@ public class GymEntryController {
     }
  
     @PostMapping
-    public ResponseEntity<GymDTO> create(@PathVariable Long logId, @RequestBody GymDTO dto, Authentication authentication) {
-        try {
-             return gymEntryService.addGymToLog(logId, dto,authentication.getName())
+    public ResponseEntity<GymDTO> create(@PathVariable Long logId, @RequestBody @Valid GymDTO dto, Authentication authentication) {
+        return gymEntryService.addGymToLog(logId, dto,authentication.getName())
              .map(ResponseEntity::ok)
              .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+       }
  
     @GetMapping
     public ResponseEntity<List<GymDTO>> getAll(@PathVariable Long logId,Authentication authentication) {
-        try {
+
             return ResponseEntity.ok(gymEntryService.getGymForLog(logId, authentication.getName()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+       }
  
     @GetMapping("/{id}")
-    public ResponseEntity<GymDTO> getById(@PathVariable Long logId, @PathVariable Long id,Authentication authentication) {
-        try {
+    public ResponseEntity<GymDTO> getById(@PathVariable Long id,Authentication authentication) {
             return gymEntryService.getGymById(id, authentication.getName())
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+       }
  
     @PutMapping("/{id}")
-    public ResponseEntity<GymDTO> update(@PathVariable Long logId, @PathVariable Long id, @RequestBody GymDTO dto,Authentication authentication) {
-        try {
+    public ResponseEntity<GymDTO> update(@PathVariable Long id, @RequestBody @Valid GymDTO dto,Authentication authentication) {
             return gymEntryService.updateGym(id, dto, authentication.getName())
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+       }
  
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long logId, @PathVariable Long id,Authentication authentication) {
-        try {
+    public ResponseEntity<Void> delete(@PathVariable Long id,Authentication authentication) {
             return gymEntryService.deleteGym(id, authentication.getName())
                     ? ResponseEntity.noContent().build()
                     : ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+       }
 }

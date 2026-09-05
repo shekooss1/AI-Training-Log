@@ -1,5 +1,6 @@
 package com.example.spring_backend.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,65 +33,45 @@ public DailyLogController(DailyLogService dls) {
 }
 
 @PostMapping
-public ResponseEntity<DailyLogDTO> createLog(@RequestBody DailyLogDTO dto,Authentication authentication) {
-   try {
-String email=authentication.getName();
+public ResponseEntity<DailyLogDTO> createLog(@RequestBody @Valid DailyLogDTO dto, Authentication authentication) {
+ String email=authentication.getName();
     DailyLogDTO created = dls.createDailyLog(dto,email);
        return  ResponseEntity.status(HttpStatus.CREATED).body(created);
-   } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-   
-}
+
 }
 
 @GetMapping
 public ResponseEntity<List<DailyLogDTO>> getAll(Authentication authentication) {
-try {
 String email=authentication.getName();
    List<DailyLogDTO> list =  dls.getAllLogs(email);
    return ResponseEntity.status(HttpStatus.OK).body(list);
 
-} catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-}
 }
 
 @GetMapping("/{id}")
 public ResponseEntity<DailyLogDTO> getById(@PathVariable Long id,Authentication authentication) {
-    try {
  String email = authentication.getName();
         return dls.getDailyLogById(id,email)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
-} catch (Exception e) {
-                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
     }
-}
+
 @PutMapping("/{id}")
-public ResponseEntity<DailyLogDTO> updateLog(@PathVariable Long id, @RequestBody DailyLogDTO dto,Authentication authentication) {
-    try {
+public ResponseEntity<DailyLogDTO> updateLog(@PathVariable Long id, @RequestBody @Valid DailyLogDTO dto,Authentication authentication) {
         String email = authentication.getName();
         return dls.updateDailyLog(id, dto,email).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
         
-    } catch (Exception e) {
-                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
-    }
 }
 @DeleteMapping("/{id}")
 public ResponseEntity<Void> deleteLog(@PathVariable Long id, Authentication authentication) {
-    try {
         String email = authentication.getName();
         boolean deleted = dls.deleteDailyLog(id,email);
         if (deleted) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
 }
 }

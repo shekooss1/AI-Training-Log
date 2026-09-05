@@ -33,6 +33,7 @@ public class GymService {
         });
     }
 
+
     public List<GymDTO> getGymForLog(Long dailyLogId,String email) {
         return gymRepository.findAllByDailyLog_IdAndDailyLog_Swimmer_Email(dailyLogId,email)
             .stream()

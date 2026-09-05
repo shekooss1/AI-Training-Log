@@ -1,15 +1,14 @@
 package com.example.spring_backend.DTOs;
+
 import com.example.spring_backend.model.Especiality;
 import com.example.spring_backend.model.Sex;
 import com.example.spring_backend.model.Stroke;
-import com.example.spring_backend.model.Swimmer;
-import io.micrometer.common.lang.internal.Contract;
-import jakarta.validation.constraints.*;
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
-public record  SwimmerDTO(
-        Long id ,
-
+public record SwimmerUpdateDto(
         @DecimalMin("1")
         double age,
 
@@ -22,8 +21,6 @@ public record  SwimmerDTO(
         @NotBlank
         String email,
 
-        @NotBlank
-        @Length(min = 8 , message = "minimum of 8 characters")
         @Pattern(
                 regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$",
                 message = "Password must be at least 8 characters and include an uppercase letter, lowercase letter, number, and special character"
@@ -33,12 +30,4 @@ public record  SwimmerDTO(
         Sex sex,
 
         Stroke stroke) {
-
-
-
-
-    public Swimmer toEntity() {
-        return new Swimmer(age,especiality,name,email,password,sex,stroke);
-    }
 }
- 

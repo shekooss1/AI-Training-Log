@@ -13,7 +13,6 @@ import jakarta.persistence.ManyToOne;
 public class Supplment {
  private String name ;
  private double dose ;
- private  double time ;
  private String notes ;
 
   @Id 
@@ -27,10 +26,9 @@ private DailyLog dailyLog ;
  public Supplment(){}
  
  
- public Supplment(String name, double dose, double time,String notes) {
+ public Supplment(String name, double dose, String notes) {
     this.name = name;
     this.dose = dose;
-    this.time = time;
     this.notes= notes;
 }
 
@@ -51,13 +49,6 @@ private DailyLog dailyLog ;
     this.dose = dose;
   }
 
-  public double getTime() {
-    return time;
-  }
-
-  public void setTime(double time) {
-    this.time = time;
-  }
 
   public Long getId() {
     return id;
