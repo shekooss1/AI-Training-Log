@@ -1,0 +1,20 @@
+[
+  {
+    "email": "swimmer1@test.com",
+    "password": "TestPass123!",
+    "name": "Alex",
+    "age": 20 ,
+    "stroke": "sf",
+    "especiality":"sprint",
+    "sex": "male"
+  },
+  {
+    "email": "swimmer2@test.com",
+    "password": "TestPass123!",
+    "name": "Ali",
+    "age": 20 ,
+    "stroke": "bf",
+    "especiality":"sprint",
+    "sex": "male"
+  }
+]

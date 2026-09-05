@@ -4,11 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "swimmers")
 public class Swimmer {
- private String name , password  ;
+
+    private String name ;
+
+
+    private String password  ;
 
  @Enumerated(EnumType.STRING)
  private Especiality especiality  ;
@@ -20,7 +28,7 @@ public class Swimmer {
  @Id 
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  private Long id ;
- 
+
  private double age ;
 
  @Column(unique = true)

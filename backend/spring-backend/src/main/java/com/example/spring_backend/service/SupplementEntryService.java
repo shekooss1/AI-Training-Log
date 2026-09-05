@@ -44,7 +44,6 @@ public class SupplementEntryService {
         return supplmentRepository.findByIdAndDailyLog_Swimmer_Email(supplementId,email).map(supplment -> {
             supplment.setName(dto.name());
             supplment.setDose(dto.dose());
-            supplment.setTime(dto.time());
             supplment.setNotes(dto.notes());
             return SupplmentDTO.from(supplmentRepository.save(supplment));
         });
