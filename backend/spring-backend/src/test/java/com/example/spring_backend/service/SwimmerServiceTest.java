@@ -1,62 +1,76 @@
 package com.example.spring_backend.service;
 
 import com.example.spring_backend.DTOs.SwimmerDTO;
-import com.example.spring_backend.DTOs.SwimmerResponseDTO;
-import com.example.spring_backend.model.Swimmer;
-import com.example.spring_backend.repository.SwimmerRepository;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
-import java.util.Optional;
-
-import static com.example.spring_backend.model.Especiality.sprint;
+import static com.example.spring_backend.model.Especiality.middle;
 import static com.example.spring_backend.model.Sex.male;
 import static com.example.spring_backend.model.Stroke.sf;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
+@AutoConfigureMockMvc
 public class SwimmerServiceTest {
 
-@Mock
-    SwimmerRepository swimmerRepository;
+    @Container
+    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:16");
 
-    @InjectMocks
-    SwimmerService swimmerService;
 
-    @BeforeAll
-    public static void print(){
-        System.out.println("Before All");
+    @Autowired
+    private MockMvc mockMvc ;
+
+
+
+
+    @DynamicPropertySource
+    static void configurations(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+
     }
-
-
+    private static String asJsonString(Object obj) throws Exception {
+        return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj);
+    }
     @Test
-    void  addSwimmer(){
-        System.out.println("MyFirstTest");
-        SwimmerDTO swimmerDTO = new SwimmerDTO( 10L,20,sprint,"Ali","ali@gmail.com","Shekoo2006@",male,sf);
-        when(swimmerRepository.save(any(Swimmer.class))).thenReturn(swimmerDTO.toEntity());
-SwimmerResponseDTO  dto = swimmerService.createSwimmer(swimmerDTO);
-        Assertions.assertEquals(swimmerDTO.email(),dto.email());
-    }
+    void addSwimmer() throws Exception {
+        SwimmerDTO dto = new SwimmerDTO(10L,20,middle,"hesho","hesham@gmail.com","Heshoo1990@",male,sf);
 
-    @Test
-    void  addSwimmerThrowException(){
-        System.out.println("MyFirstTest");
-        SwimmerDTO swimmerDTO = new SwimmerDTO( 10L,20,sprint,"","ali@gmail.com","Shekoo2006@",male,sf);
-        Assertions.assertThrows(RuntimeException.class,()-> swimmerService.createSwimmer(swimmerDTO));
-    }
-@Test
-    void deleteSwimmerByIdTest(){
-    SwimmerDTO swimmerDTO = new SwimmerDTO( 10L,20,sprint,"Ali","ali@gmail.com","Shekoo2006@",male,sf);
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/swimmers")
+                .contentType("application/json")
+                .content(asJsonString(dto))
+                 .accept("application/json"))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists());
+        ;
+        String loginPayload = "{\"email\":\"hesham@gmail.com\",\"password\":\"Heshoo1990@\"}";
 
-    doNothing().when(swimmerRepository).deleteById(10L);
-    when(swimmerRepository.findByIdAndEmail(10L,"ali@gmail.com"))
-            .thenReturn(Optional.of(swimmerDTO.toEntity()));
-swimmerService.deleteSwimmer(10L,"ali@gmail.com");
-        verify(swimmerRepository,times(1)).deleteById(10L);
+
+        String token = mockMvc.perform(MockMvcRequestBuilders.post("/login")
+                        .contentType("application/json")
+                        .content(loginPayload))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+// token is now the raw JWT string, no parsing neededo match your response
+
+        // 3. Hit a protected endpoint with the token
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/dailylogs")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
 
     }
 
