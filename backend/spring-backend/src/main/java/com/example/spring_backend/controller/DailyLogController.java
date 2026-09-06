@@ -31,6 +31,7 @@ DailyLogService dls ;
 public DailyLogController(DailyLogService dls) {
     this.dls = dls;
 System.out.println("fdafwdfds");
+    System.out.println("fdafwdfds");
 }
 
 @PostMapping
